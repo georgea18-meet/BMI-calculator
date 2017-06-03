@@ -1,0 +1,40 @@
+shadowingColor = "#303030"
+backgroundColor = "#00ff44"
+fontColor = "#ff1133"
+tabsHeight = 30
+tabsWidth = 45
+buttonsHeight = 45
+buttonsWidth = 75
+tabsShadowing = 2
+font = "Britannic Bold"
+textFontSize = 24
+textShadowing = 1
+titleFontSize = 72
+titleShadowing = 5
+titleX = 250
+titleY = 25
+moveByX = 0
+moveByY = 0
+GraphicsWindow.BackgroundColor = backgroundColor
+GraphicsWindow.FontName = font
+GraphicsWindow.BrushColor = shadowingColor
+GraphicsWindow.FontSize = titleFontSize
+GraphicsWindow.DrawText(titleX+titleShadowing+moveByX,titleY+titleShadowing+moveByY,"BMI")
+GraphicsWindow.FontSize = textFontSize
+GraphicsWindow.DrawText(150+moveByX+textShadowing,150+moveByY+textShadowing,"Enter your weight (Kg):")
+GraphicsWindow.DrawText(150+moveByX+textShadowing,200+moveByY+textShadowing,"Enter your height (m):")
+GraphicsWindow.FillRectangle(415+moveByX+tabsShadowing,150+moveByY+tabsShadowing,tabsWidth,tabsHeight)
+GraphicsWindow.FillRectangle(415+moveByX+tabsShadowing,200+moveByY+tabsShadowing,tabsWidth,tabsHeight)
+GraphicsWindow.FillRectangle(275+moveByX+tabsShadowing,275+moveByY+tabsShadowing,buttonsWidth,buttonsHeight)
+GraphicsWindow.BrushColor = fontColor
+GraphicsWindow.FontSize = titleFontSize
+GraphicsWindow.DrawText(titleX+moveByX,titleY+moveByY,"BMI")
+GraphicsWindow.FontSize = textFontSize
+GraphicsWindow.DrawText(150+moveByX,150+moveByY,"Enter your weight (Kg):")
+GraphicsWindow.DrawText(150+moveByX,200+moveByY,"Enter your height (m):")
+massTab = Controls.AddTextBox(415+moveByX,150+moveByY)
+Controls.SetSize(massTab,tabsWidth,tabsHeight)
+heigtTab = Controls.AddTextBox(415+moveByX,200+moveByY)
+Controls.SetSize(heigtTab,tabsWidth,tabsHeight)
+calculateButton = Controls.AddButton("Go!",275+moveByX,275+moveByY)
+Controls.SetSize(calculateButton,buttonsWidth,buttonsHeight)
