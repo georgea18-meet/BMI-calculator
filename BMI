@@ -1,8 +1,15 @@
+weightsFile = "C:\Users\George\Documents\George\weights.docx"
 shadowingColor = "#303030"
 backgroundColor = "#00ff44"
 fontColor = "#ff1133"
 tabsHeight = 30
 tabsWidth = 45
+barWidth = 450
+barX = 100
+barY = 250
+maxBmiVal = 45
+triBaseWidth = 50
+triHeight = Math.Tan(Math.GetRadians(60))*(triBaseWidth/2)
 buttonsHeight = 45
 buttonsWidth = 75
 tabsShadowing = 2
@@ -15,6 +22,16 @@ titleX = 250
 titleY = 25
 moveByX = 0
 moveByY = 0
+msgWidth = 500
+msgX = 100
+msgY = 125
+startPointX = 100
+startPointY = 350
+Xlength = 250
+Ylength = Xlength
+pointSize = 10
+numOfPoints = 5
+index = File.ReadLine(weightsFile,1)+1
 GraphicsWindow.BackgroundColor = backgroundColor
 GraphicsWindow.FontName = font
 GraphicsWindow.BrushColor = shadowingColor
@@ -22,7 +39,7 @@ GraphicsWindow.FontSize = titleFontSize
 GraphicsWindow.DrawText(titleX+titleShadowing+moveByX,titleY+titleShadowing+moveByY,"BMI")
 GraphicsWindow.FontSize = textFontSize
 GraphicsWindow.DrawText(150+moveByX+textShadowing,150+moveByY+textShadowing,"Enter your weight (Kg):")
-GraphicsWindow.DrawText(150+moveByX+textShadowing,200+moveByY+textShadowing,"Enter your height (m):")
+GraphicsWindow.DrawText(150+moveByX+textShadowing,200+moveByY+textShadowing,"Enter your height (cm):")
 GraphicsWindow.FillRectangle(415+moveByX+tabsShadowing,150+moveByY+tabsShadowing,tabsWidth,tabsHeight)
 GraphicsWindow.FillRectangle(415+moveByX+tabsShadowing,200+moveByY+tabsShadowing,tabsWidth,tabsHeight)
 GraphicsWindow.FillRectangle(275+moveByX+tabsShadowing,275+moveByY+tabsShadowing,buttonsWidth,buttonsHeight)
@@ -31,10 +48,142 @@ GraphicsWindow.FontSize = titleFontSize
 GraphicsWindow.DrawText(titleX+moveByX,titleY+moveByY,"BMI")
 GraphicsWindow.FontSize = textFontSize
 GraphicsWindow.DrawText(150+moveByX,150+moveByY,"Enter your weight (Kg):")
-GraphicsWindow.DrawText(150+moveByX,200+moveByY,"Enter your height (m):")
+GraphicsWindow.DrawText(150+moveByX,200+moveByY,"Enter your height (cm):")
 massTab = Controls.AddTextBox(415+moveByX,150+moveByY)
 Controls.SetSize(massTab,tabsWidth,tabsHeight)
 heigtTab = Controls.AddTextBox(415+moveByX,200+moveByY)
 Controls.SetSize(heigtTab,tabsWidth,tabsHeight)
 calculateButton = Controls.AddButton("Go!",275+moveByX,275+moveByY)
 Controls.SetSize(calculateButton,buttonsWidth,buttonsHeight)
+Controls.ButtonClicked = click
+Sub click
+  If Controls.LastClickedButton = calculateButton Then
+    File.WriteLine(weightsFile,1,index)
+    mass = Controls.GetTextBoxText(massTab)
+    File.WriteLine(weightsFile,index+1,mass)
+    height = Controls.GetTextBoxText(heigtTab)/100
+    BMI = mass/(height*height)
+    targetWeightB = 18.5*height*height
+    rangeB = Math.Floor(targetWeightB)+Math.Round((targetWeightB - Math.Floor(targetWeightB))*100)/100
+    targetWeightE = 24.9*height*height
+    rangeE = Math.Floor(targetWeightE)+Math.Round((targetWeightE - Math.Floor(targetWeightE))*100)/100
+    valueToPrint = Math.Floor(BMI)+Math.Round((BMI - Math.Floor(BMI))*100)/100
+    GraphicsWindow.Clear()
+    GraphicsWindow.FontSize = titleFontSize
+    GraphicsWindow.BrushColor = shadowingColor
+    GraphicsWindow.DrawText(titleX+moveByX+titleShadowing,titleY+moveByY+titleShadowing,valueToPrint)
+    If BMI < 18.5 Then
+      msgToPrint = "You are Underweight, you need to increase your calories consumption!"
+    ElseIf BMI < 25 Then
+      msgToPrint = "Your weight is healthy, keep your healthy nutrition!"
+    ElseIf BMI < 30 Then
+      msgToPrint = "You are Overweight, you need to consider decreasing your calories consumption!"
+    Else
+      msgToPrint = "You're considered as Obese, you have to decrease your calories consumption!"
+    EndIf
+    msgToPrint = msgToPrint+" The healthy weight range for you is: "+rangeB+"-"+rangeE
+    GraphicsWindow.FontSize = textFontSize
+    GraphicsWindow.DrawBoundText(msgX+moveByX+textShadowing,msgY+moveByY+textShadowing,msgWidth,msgToPrint)
+    GraphicsWindow.FillRectangle(barX+moveByX+tabsShadowing,barY+moveByY+tabsShadowing,barWidth,45)
+    If BMI < maxBmiVal Then
+      triHead = barX+BMI*(barWidth/maxBmiVal)
+      triBaseP1 = triHead-(triBaseWidth/2)
+      triBaseP2 = triHead+(triBaseWidth/2)
+    Else
+      triHead = barX+barWidth
+      triBaseP1 = triHead-(triBaseWidth/2)
+      triBaseP2 = triHead+(triBaseWidth/2)
+    EndIf
+    GraphicsWindow.FillTriangle(triHead+tabsShadowing+moveByX,barY+tabsShadowing+moveByY,triBaseP1+tabsShadowing+moveByX,barY-triHeight+tabsShadowing+moveByY,triBaseP2+tabsShadowing+moveByX,barY-triHeight+tabsShadowing+moveByY)
+    GraphicsWindow.FillRectangle(300+moveByX+tabsShadowing,315+moveByY+tabsShadowing,buttonsWidth,buttonsHeight)
+    GraphicsWindow.FillRectangle(300+moveByX+tabsShadowing,375+moveByY+tabsShadowing,buttonsWidth,buttonsHeight)
+    GraphicsWindow.BrushColor = fontColor
+    GraphicsWindow.DrawBoundText(msgX+moveByX,msgY+moveByY,msgWidth,msgToPrint)
+    GraphicsWindow.FontSize = titleFontSize
+    GraphicsWindow.DrawText(titleX+moveByX,titleY+moveByY,valueToPrint)
+    GraphicsWindow.FillTriangle(triHead+moveByX,barY+moveByY,triBaseP1+moveByX,barY-triHeight+moveByY,triBaseP2+moveByX,barY-triHeight+moveByY)
+    GraphicsWindow.BrushColor = "#ff0000"
+    GraphicsWindow.FillRectangle(barX+moveByX,barY+moveByY,18.5*(barWidth/maxBmiVal),45)
+    GraphicsWindow.BrushColor = "#00ff00"
+    GraphicsWindow.FillRectangle(barX+18.5*(barWidth/maxBmiVal)+moveByX,barY+moveByY,(25-18.5)*(barWidth/maxBmiVal),45)
+    GraphicsWindow.BrushColor = "#ffff00"
+    GraphicsWindow.FillRectangle(barX+25*(barWidth/maxBmiVal)+moveByX,barY+moveByY,(30-25)*(barWidth/maxBmiVal),45)
+    GraphicsWindow.BrushColor = "#ff0000"
+    GraphicsWindow.FillRectangle(barX+30*(barWidth/maxBmiVal)+moveByX,barY+moveByY,(maxBmiVal-30)*(barWidth/maxBmiVal),45)
+    GraphicsWindow.FontSize = textFontSize
+    GraphicsWindow.BrushColor = fontColor
+    back = Controls.AddButton("Back!",300+moveByX,315+moveByY)
+    graph = Controls.AddButton("Show!",300+moveByX,375+moveByY)
+    Controls.SetSize(back,buttonsWidth,buttonsHeight)
+    Controls.SetSize(graph,buttonsWidth,buttonsHeight)
+  ElseIf Controls.LastClickedButton = back Then
+    GraphicsWindow.Clear()
+    GraphicsWindow.BackgroundColor = backgroundColor
+    GraphicsWindow.FontName = font
+    GraphicsWindow.BrushColor = shadowingColor
+    GraphicsWindow.FontSize = titleFontSize
+    GraphicsWindow.DrawText(titleX+titleShadowing+moveByX,titleY+titleShadowing+moveByY,"BMI")
+    GraphicsWindow.FontSize = textFontSize
+    GraphicsWindow.DrawText(150+moveByX+textShadowing,150+moveByY+textShadowing,"Enter your weight (Kg):")
+    GraphicsWindow.DrawText(150+moveByX+textShadowing,200+moveByY+textShadowing,"Enter your height (cm):")
+    GraphicsWindow.FillRectangle(415+moveByX+tabsShadowing,150+moveByY+tabsShadowing,tabsWidth,tabsHeight)
+    GraphicsWindow.FillRectangle(415+moveByX+tabsShadowing,200+moveByY+tabsShadowing,tabsWidth,tabsHeight)
+    GraphicsWindow.FillRectangle(275+moveByX+tabsShadowing,275+moveByY+tabsShadowing,buttonsWidth,buttonsHeight)
+    GraphicsWindow.BrushColor = fontColor
+    GraphicsWindow.FontSize = titleFontSize
+    GraphicsWindow.DrawText(titleX+moveByX,titleY+moveByY,"BMI")
+    GraphicsWindow.FontSize = textFontSize
+    GraphicsWindow.DrawText(150+moveByX,150+moveByY,"Enter your weight (Kg):")
+    GraphicsWindow.DrawText(150+moveByX,200+moveByY,"Enter your height (cm):")
+    massTab = Controls.AddTextBox(415+moveByX,150+moveByY)
+    Controls.SetSize(massTab,tabsWidth,tabsHeight)
+    heigtTab = Controls.AddTextBox(415+moveByX,200+moveByY)
+    Controls.SetSize(heigtTab,tabsWidth,tabsHeight)
+    calculateButton = Controls.AddButton("Go!",275+moveByX,275+moveByY)
+    Controls.SetSize(calculateButton,buttonsWidth,buttonsHeight)
+  ElseIf Controls.LastClickedButton = graph Then
+    GraphicsWindow.Clear()
+    GraphicsWindow.DrawLine(startPointX+tabsShadowing+moveByX,startPointY+tabsShadowing+moveByY,startPointX+Xlength+tabsShadowing+moveByX,startPointY+tabsShadowing+moveByY)
+    GraphicsWindow.DrawLine(startPointX+tabsShadowing+moveByX,startPointY+tabsShadowing+moveByY,startPointX+tabsShadowing+moveByX,startPointY-Ylength+tabsShadowing+moveByY)
+    GraphicsWindow.DrawLine(startPointX+tabsShadowing+moveByX,startPointY-Ylength+tabsShadowing+moveByY,startPointX-10+tabsShadowing+moveByX,startPointY-Ylength+10+tabsShadowing+moveByX)
+    GraphicsWindow.DrawLine(startPointX+tabsShadowing+moveByX,startPointY-Ylength+tabsShadowing+moveByY,startPointX+10+tabsShadowing+moveByX,startPointY-Ylength+10+tabsShadowing+moveByY)
+    GraphicsWindow.DrawLine(startPointX+Xlength+tabsShadowing+moveByX,startPointY+tabsShadowing+moveByY,startPointX+Xlength-10+tabsShadowing+moveByX,startPointY+10+tabsShadowing+moveByY)
+    GraphicsWindow.DrawLine(startPointX+Xlength+tabsShadowing+moveByX,startPointY+tabsShadowing+moveByY,startPointX+Xlength-10+tabsShadowing+moveByX,startPointY-10+tabsShadowing+moveByY)
+    GraphicsWindow.PenColor = fontColor
+    GraphicsWindow.DrawLine(startPointX+moveByX,startPointY+moveByY,startPointX+Xlength+moveByX,startPointY+moveByY)
+    GraphicsWindow.DrawLine(startPointX+moveByX,startPointY+moveByY,startPointX+moveByX,startPointY-Ylength+moveByY)
+    GraphicsWindow.DrawLine(startPointX+moveByX,startPointY-Ylength+moveByY,startPointX-10+moveByX,startPointY-Ylength+10+moveByX)
+    GraphicsWindow.DrawLine(startPointX+moveByX,startPointY-Ylength+moveByY,startPointX+10+moveByX,startPointY-Ylength+10+moveByY)
+    GraphicsWindow.DrawLine(startPointX+Xlength+moveByX,startPointY+moveByY,startPointX+Xlength-10+moveByX,startPointY+10+moveByY)
+    GraphicsWindow.DrawLine(startPointX+Xlength+moveByX,startPointY+moveByY,startPointX+Xlength-10+moveByX,startPointY-10+moveByY)
+    If index < numOfPoints+1 Then
+      maxMass = File.ReadLine(weightsFile,2)
+      For i = 3 to numOfPoints+1
+        If File.ReadLine(weightsFile,i) > maxMass Then
+          maxMass = File.ReadLine(weightsFile,i)
+        EndIf
+      EndFor
+      For i = 2 to numOfPoints+1
+        massI = File.ReadLine(weightsFile,i)
+        GraphicsWindow.BrushColor = shadowingColor
+        GraphicsWindow.FillEllipse(startPointX+(Xlength/numOfPoints)*i+moveByX+tabsShadowing,startPointY-(Ylength/maxMass)*massI+moveByY+tabsShadowing,pointSize,pointSize)
+        GraphicsWindow.BrushColor = fontColor
+        GraphicsWindow.FillEllipse(startPointX+(Xlength/numOfPoints)*i+moveByX,startPointY-(Ylength/maxMass)*massI+moveByY,pointSize,pointSize)
+      EndFor
+    Else
+      maxMass = File.ReadLine(weightsFile,index)
+      For i = 1 to numOfPoints-1
+        If File.ReadLine(weightsFile,index-i) > maxMass Then
+          maxMass = File.ReadLine(weightsFile,index-i)
+        EndIf
+      EndFor
+      For i = 0 to numOfPoints-1
+        massI = File.ReadLine(weightsFile,index-i)
+        GraphicsWindow.BrushColor = shadowingColor
+        GraphicsWindow.FillEllipse(startPointX+(Xlength/numOfPoints)*i+moveByX+tabsShadowing,startPointY-(Ylength/maxMass)*massI+moveByY+tabsShadowing,pointSize,pointSize)
+        GraphicsWindow.BrushColor = fontColor
+        GraphicsWindow.FillEllipse(startPointX+(Xlength/numOfPoints)*i+moveByX,startPointY-(Ylength/maxMass)*massI+moveByY,pointSize,pointSize)
+      EndFor
+    EndIf
+  EndIf
+EndSub
